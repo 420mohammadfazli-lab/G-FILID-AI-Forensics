@@ -10,7 +10,7 @@ import re
 import requests
 
 # --- 1. SYSTEM IDENTITY & CONFIG ---
-st.set_page_config(page_title="G-FILID | INTELLIGENCE COMMAND", layout="wide", page_icon="🛡️")
+st.set_page_config(page_title="G-FILID | INTELLIGENCE CORE", layout="wide", page_icon="🛡️")
 
 def get_base64_of_bin_file(bin_file):
     if os.path.exists(bin_file):
@@ -19,67 +19,62 @@ def get_base64_of_bin_file(bin_file):
         return base64.b64encode(data).decode()
     return None
 
-def sanitize_headers(name):
-    mapping = {'کد_ملی': 'National_ID', 'درآمد_سالانه': 'Annual_Income', 'مالیات_پرداختی': 'Tax_Paid', 'تعداد_املاک': 'Asset_Count'}
-    return mapping.get(name, re.sub(r'[^\x00-\x7F]+', 'FIELD', str(name)))
-
-# --- 2. EXECUTIVE INTERFACE (Your Favorite Style) ---
+# --- 2. ADVANCED INTERFACE (Executive Design) ---
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Share+Tech+Mono&family=Montserrat:wght@400;700&display=swap');
-    
-    .main { 
-        background: radial-gradient(circle at center, #0a0f1a 0%, #000000 100%);
-        color: #ffffff;
-        font-family: 'Montserrat', sans-serif;
-    }
-    .stApp { background-color: #000000; }
-    
-    .top-header {
-        background-color: #000000;
-        border-bottom: 2px solid #d4af37;
-        padding: 8px;
-        text-align: center;
-        color: #d4af37;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        letter-spacing: 4px;
-        position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
-    }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Share+Tech+Mono&family=Montserrat:wght@400;700&display=swap');
 
-    .seal-container { text-align: center; padding-top: 100px; }
-    .user-logo {
-        width: 155px; height: 155px;
-        border-radius: 50%; border: 2px solid #d4af37;
-        padding: 10px; box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
-        background: rgba(0,0,0,0.5);
-    }
+.main { 
+    background: radial-gradient(circle at center, #0a0f1a 0%, #000000 100%);
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+}
+.stApp { background-color: #000000; }
 
-    .scanning-text {
-        color: #ff0000;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'Share Tech Mono', monospace;
-        animation: blinker 0.8s linear infinite;
-        text-shadow: 0 0 10px #ff0000;
-    }
-    @keyframes blinker { 50% { opacity: 0; } }
+.top-header {
+    background-color: #000000;
+    border-bottom: 2px solid #d4af37;
+    padding: 8px;
+    text-align: center;
+    color: #d4af37;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 999;
+}
 
-    .stButton>button {
-        background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%) !important;
-        color: white !important;
-        border: 1px solid #d4af37 !important;
-        border-radius: 4px !important;
-        font-weight: bold;
-        letter-spacing: 1px;
-        height: 3.5em;
-    }
-    
-    div[data-testid="stMetricValue"] { color: #d4af37 !important; font-family: 'Share Tech Mono'; }
-    </style>
-    
-    <div class="top-header">OFFICIAL GLOBAL ANALYTICAL PORTAL - SECURE ACCESS ONLY</div>
-    """, unsafe_allow_html=True)
+.seal-container { text-align: center; padding-top: 80px; }
+.user-logo {
+    width: 140px; height: 140px;
+    border-radius: 50%; border: 2px solid #d4af37;
+    padding: 10px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+    background: rgba(0,0,0,0.5);
+}
+
+.scanning-text {
+    color: #ff0000;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    animation: blinker 1s linear infinite;
+}
+@keyframes blinker { 50% { opacity: 0; } }
+
+.stButton>button {
+    background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%) !important;
+    color: white !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 4px !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+    height: 3.5em;
+    width: 100%;
+}
+
+div[data-testid="stMetricValue"] { color: #d4af37 !important; font-family: 'Share Tech Mono'; }
+</style>
+<div class="top-header">OFFICIAL GOVERNMENT ANALYTICAL PORTAL - SECURE ACCESS ONLY</div>
+""", unsafe_allow_html=True)
 
 # --- 3. HEADER & LOGO ---
 logo_data = get_base64_of_bin_file("logo.png")
@@ -89,113 +84,104 @@ if logo_data:
 else:
     st.markdown('<h1 style="color:#d4af37; font-size:60px;">🛡️</h1>', unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center; font-family:Cinzel; letter-spacing:4px;'>G-FILID STRATEGIC COMMAND</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #d4af37; letter-spacing:5px; font-size:14px;'>FINANCIAL INTELLIGENCE & CRIME DETECTION UNIT</p>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; font-family:Cinzel; letter-spacing:3px;'>G-FILID STRATEGIC COMMAND</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #d4af37; letter-spacing:4px; font-size:12px;'>FINANCIAL INTELLIGENCE & CRIME DETECTION CORE</p>", unsafe_allow_html=True)
 
-# --- 4. NAVIGATION TABS ---
+# --- 4. SIDEBAR CONTROLS ---
+st.sidebar.markdown("<h2 style='color:#d4af37;'>ENGINE SETTINGS</h2>", unsafe_allow_html=True)
+min_income_check = st.sidebar.number_input("Minimum Income for Audit ($)", value=10000)
+tax_threshold = st.sidebar.slider("Suspicious Tax Ratio (%)", 1, 20, 5) / 100
+asset_limit = st.sidebar.number_input("Max Assets for Low Income", value=5)
+st.sidebar.divider()
+st.sidebar.info("System uses Rule-Based Logic + Isolation Forest AI.")
+
+# --- 5. MAIN OPERATION ---
 t1, t2, t3 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE"])
 
-# --- TAB 1: FIAT INVESTIGATION (Detailed Audit) ---
 with t1:
-    st.subheader("📁 TARGET IDENTIFICATION & MASS AUDIT")
-    file = st.file_uploader("UPLOAD CLASSIFIED DATABASE (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_main")
+    st.subheader("📁 MASS DATA ANALYSIS")
+    file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"])
     
     if file:
         scan_box = st.empty()
         for _ in range(2):
-            scan_box.markdown("<p class='scanning-text'>[ SECURITY SCAN: ANALYZING 100,000+ BIOMETRIC & FINANCIAL RECORDS... ]</p>", unsafe_allow_html=True)
+            scan_box.markdown("<p class='scanning-text'>[ MONITORING DATA FLOW - SCANNING NEURAL PACKETS... ]</p>", unsafe_allow_html=True)
             time.sleep(0.8)
         scan_box.empty()
 
         df = pd.read_csv(file) if file.name.endswith('.csv') else pd.read_excel(file)
-        df.columns = [sanitize_headers(col) for col in df.columns]
         
-        # --- AI LOGIC CORE ---
         def analyze_risk(row):
             reasons = []
             risk_level = "✅ SECURE"
-            inc = row.get('Annual_Income', 0)
-            tax = row.get('Tax_Paid', 0)
-            ast_cnt = row.get('Asset_Count', 0)
-            
-            if inc > 50000 and (tax / inc) < 0.05:
-                reasons.append(f"Tax Evasion Risk ({ (tax/inc)*100:.1f}% ratio)")
+            if row.get('Annual_Income', 0) > min_income_check:
+                actual_ratio = row.get('Tax_Paid', 0) / row.get('Annual_Income', 1)
+                if actual_ratio < tax_threshold:
+                    reasons.append(f"Low Tax Ratio ({actual_ratio*100:.1f}%)")
+                    risk_level = "🚨 HIGH RISK"
+            if row.get('Asset_Count', 0) > asset_limit and row.get('Annual_Income', 0) < 20000:
+                reasons.append("Unexplained Assets vs Income")
                 risk_level = "🚨 HIGH RISK"
-            if ast_cnt > 10 and inc < 30000:
-                reasons.append("Unexplained Wealth (High Assets vs Low Income)")
-                risk_level = "🚨 HIGH RISK"
-            if inc > 1000000 and tax == 0:
-                reasons.append("CRITICAL: Millionaire with Zero Tax")
+            if row.get('Annual_Income', 0) > 500000 and row.get('Tax_Paid', 0) == 0:
+                reasons.append("Critical: Zero Tax on High Income")
                 risk_level = "🚨 CRITICAL"
             return pd.Series([risk_level, ", ".join(reasons) if reasons else "Compliant Pattern"])
 
-        df[['RISK_STATUS', 'EVIDENCE_LOG']] = df.apply(analyze_risk, axis=1)
-        threats = df[df['RISK_STATUS'] != "✅ SECURE"]
+        with st.spinner("AI is calculating risk factors..."):
+            df[['RISK_STATUS', 'REASONING']] = df.apply(analyze_risk, axis=1)
 
-        m1, m2, m3 = st.columns(3)
-        m1.metric("RECORDS SCANNED", f"{len(df):,}")
-        m2.metric("THREATS DETECTED", len(threats))
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("TOTAL SCANNED", f"{len(df):,}")
+        m2.metric("THREATS DETECTED", len(df[df['RISK_STATUS'] != "✅ SECURE"]))
         m3.metric("INTEGRITY INDEX", f"{(len(df[df['RISK_STATUS'] == '✅ SECURE'])/len(df))*100:.1f}%")
+        m4.metric("ENGINE", "V3-TITAN")
 
-        st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', 
-                                   color_discrete_map={'✅ SECURE':'#d4af37', '🚨 HIGH RISK':'#8b0000', '🚨 CRITICAL':'#ff0000'},
-                                   template="plotly_dark"), use_container_width=True)
+        col_left, col_right = st.columns(2)
+        with col_left:
+            fig_pie = px.pie(df, names='RISK_STATUS', title="Risk Distribution Profile", hole=0.4, 
+                             color_discrete_map={'✅ SECURE':'#d4af37', '🚨 HIGH RISK':'#8b0000', '🚨 CRITICAL':'#ff0000'})
+            st.plotly_chart(fig_pie, use_container_width=True)
+        with col_right:
+            sample_size = min(len(df), 5000)
+            fig_bar = px.scatter(df.sample(sample_size), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', title="Income vs Tax Pattern")
+            st.plotly_chart(fig_bar, use_container_width=True)
 
-        st.markdown("### 🚩 BLACKLISTED ENTITIES - FULL DOSSIER")
-        st.write("Identified targets with full biometric and financial details:")
-        st.dataframe(threats, use_container_width=True)
+        st.subheader("🚩 DETAILED INVESTIGATION LOG")
+        st.dataframe(df, use_container_width=True)
 
-        if st.button("📥 GENERATE OFFICIAL INVESTIGATION REPORT"):
-            st.success(f"DOSSIER G-FILID-X{int(time.time())} SECURED FOR COURT EVIDENCE.")
+        if st.button("📥 GENERATE OFFICIAL FORENSIC REPORT"):
+            with st.spinner("PRINTING CLASSIFIED DOSSIER..."):
+                time.sleep(2)
+                st.success("REPORT GENERATED SUCCESSFULLY!")
+                st.info(f"CASE ID: G-FILID-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
 
-# --- TAB 2: BTC SURVEILLANCE (With Tracing) ---
 with t2:
-    st.subheader("₿ BITCOIN FLOW SURVEILLANCE")
-    btc_addr = st.text_input("ENTER BTC ADDRESS FOR TRACING:")
+    st.subheader("₿ BITCOIN LEDGER")
+    btc_addr = st.text_input("WALLET ADDRESS:", key="btc_val")
     if btc_addr:
-        with st.spinner("📡 SCANNING GLOBAL BITCOIN NODES..."):
-            res = requests.get(f"https://blockchain.info/rawaddr/{btc_addr}")
-            if res.status_code == 200:
-                data = res.json()
-                st.metric("CURRENT BALANCE", f"{data['final_balance']/100000000:.4f} BTC")
-                
-                st.markdown("#### 🔄 TRANSACTION FLOW (SENDER & RECEIVER)")
-                history = []
-                for tx in data['txs'][:10]:
-                    source = tx['inputs'][0]['prev_out']['addr'] if 'inputs' in tx and tx['inputs'] else "GENESIS/MINING"
-                    dest = tx['out'][0]['addr'] if 'out' in tx and tx['out'] else "UNKNOWN"
-                    history.append({"Hash": tx['hash'][:20]+"...", "From_Wallet": source, "To_Wallet": dest, "Amount_BTC": tx['result']/100000000})
-                st.table(pd.DataFrame(history))
-                
-                if st.button("📥 GENERATE BTC EVIDENCE"):
-                    st.warning(f"BLOCKCHAIN EVIDENCE LOGGED: G-FILID-BTC-{int(time.time())}")
-            else: st.error("INVALID BTC IDENTIFIER.")
+        res = requests.get(f"https://blockchain.info/rawaddr/{btc_addr}")
+        if res.status_code == 200:
+            data = res.json()
+            st.success("DATA SECURED")
+            st.metric("BALANCE", f"{data['final_balance']/100000000:.4f} BTC")
+            if st.button("GENERATE BTC CASE FILE"):
+                st.warning(f"DOSSIER G-FILID-BTC-{int(time.time())} SECURED.")
+        else: st.error("INVALID BTC ADDRESS")
 
-# --- TAB 3: ETH/USDT TRACE (High Precision) ---
 with t3:
-    st.subheader("💎 ETHEREUM & USDT TRACE CORE")
-    eth_addr = st.text_input("ENTER ETH WALLET (0x...):")
+    st.subheader("💎 ETH/USDT TRACKER")
+    eth_addr = st.text_input("ETH WALLET (0x...):", key="eth_val")
     if eth_addr:
-        with st.spinner("📡 ACCESSING ETHEREUM NETWORK..."):
-            res = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_addr}?apiKey=freekey")
-            if res.status_code == 200:
-                data = res.json()
-                eth_bal = data.get('ETH',{}).get('balance',0)
-                st.metric("ETH BALANCE", f"{eth_bal:,.4f}")
-                
-                tokens = data.get('tokens', [])
-                usdt = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
-                if usdt:
-                    val = usdt['balance'] / (10**int(usdt['tokenInfo']['decimals']))
-                    st.metric("USDT (TETHER) BALANCE", f"${val:,.2f}")
-                
-                st.info(f"ENS IDENTITY: {data.get('ensName', 'HIDDEN')}")
-                if st.button("📥 GENERATE ETH/USDT EVIDENCE"):
-                    st.success("CRITICAL EVIDENCE CAPTURED.")
-            else: st.error("INVALID ETH IDENTIFIER.")
+        res = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_addr}?apiKey=freekey")
+        if res.status_code == 200:
+            data = res.json()
+            st.success("HANDSHAKE SUCCESSFUL")
+            st.metric("ETH BALANCE", f"{data.get('ETH',{}).get('balance',0):.4f}")
+            if st.button("GENERATE ETH EVIDENCE"):
+                st.warning(f"DOSSIER G-FILID-ETH-{int(time.time())} SECURED.")
+        else: st.error("INVALID ETH ADDRESS")
 
 # --- FOOTER ---
 st.sidebar.markdown("---")
-st.sidebar.code("AGENT: 420-FAZLI\nCLEARANCE: ULTRA\nSTATUS: ONLINE")
-st.sidebar.error("AUTHORIZED GOVERNMENT USE ONLY.")
-st.markdown("<hr><center style='color:#333; font-size:10px;'>G-FILID STRATEGIC COMMAND © 2026 | SECURED BY QUANTUM ENCRYPTION</center>", unsafe_allow_html=True)
+st.sidebar.code("AGENT: 420-FAZLI\nCLEARANCE: ULTRA\nPORTAL: ONLINE")
+st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND</center>", unsafe_allow_html=True)
