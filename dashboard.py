@@ -201,3 +201,65 @@ with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
     
     *Status: Verified by G-FILID Protocol 2300.*
     """)
+# --- TAB 2: BTC SURVEILLANCE ---
+with tab2:
+    st.subheader("🌐 REAL-TIME BTC FLOW SURVEILLANCE")
+    btc_address = st.text_input("ENTER TARGET BTC ADDRESS:", key="btc_val_final")
+    if btc_address:
+        with st.spinner("📡 SCANNING GLOBAL NODES..."):
+            try:
+                res = requests.get(f"https://blockchain.info/rawaddr/{btc_address}")
+                if res.status_code == 200:
+                    data = res.json()
+                    st.success("🔓 DATA LINK ESTABLISHED")
+                    bc1, bc2 = st.columns(2)
+                    bal = data['final_balance']/100000000
+                    bc1.metric("CURRENT BALANCE", f"{bal:.4f} BTC")
+                    bc2.metric("TOTAL TRANSACTIONS", data['n_tx'])
+                    
+                    st.markdown("#### 🔄 TRANSACTION FLOW (Last 10 Movements)")
+                    trace_data = []
+                    for tx in data['txs'][:10]:
+                        is_in = tx['result'] > 0
+                        trace_data.append({
+                            "Type": "📥 INCOMING" if is_in else "📤 OUTGOING",
+                            "Value (BTC)": f"{abs(tx['result'])/100000000:.4f}",
+                            "Counterparty": (tx['inputs'][0]['prev_out']['addr'] if is_in else tx['out'][0]['addr']) if 'inputs' in tx else "Unknown",
+                            "Time": pd.to_datetime(tx['time'], unit='s')
+                        })
+                    st.table(pd.DataFrame(trace_data))
+                    
+                    if st.button("📥 GENERATE BTC CASE DOSSIER"):
+                        st.info(f"CASE ID: G-FILID-BTC-{int(time.time())} | TARGET: {btc_address} SECURED")
+                else: st.error("INVALID BTC ADDRESS")
+            except Exception as e: st.error(f"CONNECTION FAILED: {e}")
+
+# --- TAB 3: ETH/USDT ---
+with tab3:
+    st.subheader("💎 ETH/USDT TOKEN SURVEILLANCE")
+    eth_addr = st.text_input("ENTER ETH WALLET (0x...):", key="eth_val_final")
+    if eth_addr:
+        with st.spinner("📡 ACCESSING ETHEREUM NETWORK..."):
+            try:
+                res = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_addr}?apiKey=freekey")
+                if res.status_code == 200:
+                    data = res.json()
+                    st.success("🔓 SECURE HANDSHAKE COMPLETE")
+                    ec1, ec2, ec3 = st.columns(3)
+                    eth_bal = data.get('ETH', {}).get('balance', 0)
+                    ec1.metric("ETH BALANCE", f"{eth_bal:,.4f}")
+                    
+                    tokens = data.get('tokens', [])
+                    usdt_data = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
+                    if usdt_data:
+                        val = usdt_data['balance'] / (10**int(usdt_data['tokenInfo']['decimals']))
+                        ec2.metric("USDT BALANCE", f"${val:,.2f}")
+                    else: ec2.metric("USDT BALANCE", "$0.00")
+                    ec3.metric("TOKEN ASSETS", len(tokens))
+                    
+                    st.info(f"ENS IDENTITY: {data.get('ensName', 'UNREGISTERED')}")
+                    
+                    if st.button("📥 GENERATE ETH/USDT EVIDENCE"):
+                        st.info(f"CASE ID: G-FILID-ETH-{int(time.time())} | TARGET: {eth_addr} SECURED")
+                else: st.error("INVALID ETH ADDRESS")
+            except Exception as e: st.error(f"SYSTEM FAILURE: {e}")
