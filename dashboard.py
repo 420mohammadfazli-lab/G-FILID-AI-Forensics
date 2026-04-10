@@ -93,14 +93,14 @@ min_income_check = st.sidebar.number_input("Minimum Income for Audit ($)", value
 tax_threshold = st.sidebar.slider("Suspicious Tax Ratio (%)", 1, 20, 5) / 100
 asset_limit = st.sidebar.number_input("Max Assets for Low Income", value=5)
 st.sidebar.divider()
-st.sidebar.info("System uses Rule-Based Logic + Isolation Forest AI.")
+st.sidebar.code("AGENT: MOHAMMAD ABRAHIM FAZLI\nCLEARANCE: ULTRA\nPORTAL: ONLINE")
 
 # --- 5. MAIN OPERATION ---
 t1, t2, t3 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE"])
 
 with t1:
     st.subheader("📁 MASS DATA ANALYSIS")
-    file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"])
+    file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload")
     
     if file:
         scan_box = st.empty()
@@ -136,15 +136,7 @@ with t1:
         m3.metric("INTEGRITY INDEX", f"{(len(df[df['RISK_STATUS'] == '✅ SECURE'])/len(df))*100:.1f}%")
         m4.metric("ENGINE", "V3-TITAN")
 
-        col_left, col_right = st.columns(2)
-        with col_left:
-            fig_pie = px.pie(df, names='RISK_STATUS', title="Risk Distribution Profile", hole=0.4, 
-                             color_discrete_map={'✅ SECURE':'#d4af37', '🚨 HIGH RISK':'#8b0000', '🚨 CRITICAL':'#ff0000'})
-            st.plotly_chart(fig_pie, use_container_width=True)
-        with col_right:
-            sample_size = min(len(df), 5000)
-            fig_bar = px.scatter(df.sample(sample_size), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', title="Income vs Tax Pattern")
-            st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', title="Income vs Tax Pattern", template="plotly_dark"), use_container_width=True)
 
         st.subheader("🚩 DETAILED INVESTIGATION LOG")
         st.dataframe(df, use_container_width=True)
@@ -155,10 +147,6 @@ with t1:
                 st.success("REPORT GENERATED SUCCESSFULLY!")
                 st.info(f"CASE ID: G-FILID-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
 
-        if st.button("📥 GENERATE OFFICIAL FIAT REPORT"):
-            st.success("OFFICIAL DOSSIER GENERATED!")
-            st.info(f"CASE ID: G-FILID-FIAT-{int(time.time())}\nSTATUS: EVIDENCE ARCHIVED")
-
 with t2:
     st.subheader("🌐 BTC LEDGER SURVEILLANCE")
     btc_addr = st.text_input("ENTER BTC ADDRESS:", key="btc_logic_final")
@@ -168,17 +156,15 @@ with t2:
             if res.status_code == 200:
                 data = res.json()
                 st.success("🔓 DATA LINK ESTABLISHED")
-                bc1, bc2 = st.columns(2)
+                bc1, bc2 = st.columns(2) # فیکس شد
                 bal = data['final_balance']/100000000
-                mc1.metric("BALANCE", f"{bal:.4f} BTC")
-                mc2.metric("TRANSACTIONS", data['n_tx'])
+                bc1.metric("BALANCE", f"{bal:.4f} BTC") # اصلاح mc1 به bc1
+                bc2.metric("TRANSACTIONS", data['n_tx']) # اصلاح mc2 به bc2
                 
-                # ردیابی تراکنش‌ها
                 st.markdown("#### 🔄 RECENT FLOWS (Source & Destination)")
                 txs = [{"Hash": tx['hash'][:20]+"...", "Value": tx['result']/100000000, "Time": pd.to_datetime(tx['time'], unit='s')} for tx in data['txs'][:10]]
                 st.table(pd.DataFrame(txs))
                 
-                # دکمه گزارش
                 if st.button("📥 GENERATE BTC CASE REPORT"):
                     st.info(f"CASE ID: G-FILID-BTC-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
             else: st.error("INVALID ADDRESS")
@@ -192,41 +178,34 @@ with t3:
             if res.status_code == 200:
                 data = res.json()
                 st.success("🔓 HANDSHAKE SUCCESSFUL")
+                ec1, ec2 = st.columns(2)
                 eth_bal = data.get('ETH',{}).get('balance',0)
-                st.metric("ETH BALANCE", f"{eth_bal:,.4f}")
+                ec1.metric("ETH BALANCE", f"{eth_bal:,.4f}")
                 
-                # پیدا کردن تتر (USDT) با دقت اعشار
                 tokens = data.get('tokens', [])
                 usdt = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
                 if usdt:
                     val = usdt['balance'] / (10**int(usdt['tokenInfo']['decimals']))
-                    st.metric("USDT BALANCE", f"${val:,.2f}")
-                else: st.metric("USDT BALANCE", "$0.00")
+                    ec2.metric("USDT BALANCE", f"${val:,.2f}")
+                else: ec2.metric("USDT BALANCE", "$0.00")
                 
                 st.info(f"ENS IDENTITY: {data.get('ensName', 'UNREGISTERED')}")
                 
-                # دکمه گزارش
                 if st.button("📥 GENERATE ETH CASE REPORT"):
                     st.info(f"CASE ID: G-FILID-ETH-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
             else: st.error("INVALID ADDRESS")
 
-# --- FOOTER ---
-st.sidebar.markdown("---")
-st.sidebar.code("AGENT: MOHAMMAD ABRAHIM FAZLI\nCLEARANCE: ULTRA\nPORTAL: ONLINE")
-st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND</center>", unsafe_allow_html=True)
-# --- ADDING TO SIDEBAR ---
+# --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
 with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
     st.markdown("""
     **Algorithm:** Isolation Forest (Unsupervised Learning)
-    
     **Detection Logic:**
-    1. **Data Ingestion:** High-speed scanning of multivariate financial features.
-    2. **Recursive Partitioning:** The AI isolates anomalies by measuring how few steps it takes to separate a record from the rest.
-    3. **Heuristic Rules:** 
-       - Tax-to-Income Divergence < 0.05
-       - Asset-to-Wealth Imbalance
-    4. **Blockchain Attribution:** Real-time API handshake with global nodes to verify ledger integrity.
-    
+    1. Data Ingestion
+    2. Recursive Partitioning
+    3. Heuristic Rules
+    4. Blockchain Attribution
     *Status: Verified by G-FILID Protocol 2030.*
     """)
+
+st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND</center>", unsafe_allow_html=True)
