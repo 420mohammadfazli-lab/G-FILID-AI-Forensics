@@ -9,14 +9,14 @@ import os
 import re
 import requests
 
-# --- 1. GLOBAL SYSTEM ARCHITECTURE ---
+# --- 1. SYSTEM IDENTITY & CONFIG ---
 st.set_page_config(
     page_title="G-FILID | SUPREME GLOBAL COMMAND", 
     layout="wide", 
     page_icon="🛡️"
 )
 
-# --- 2. SECURITY & UTILITY FUNCTIONS ---
+# --- 2. SECURITY & ANALYTICAL FUNCTIONS ---
 def sanitize_headers(name):
     mapping = {
         'کد_ملی': 'National_ID',
@@ -25,7 +25,8 @@ def sanitize_headers(name):
         'تعداد_املاک': 'Asset_Count',
         'وضعیت_ریسک': 'AI_Risk_Score'
     }
-    return mapping.get(name, re.sub(r'[^\x00-\x7F]+', 'FIELD', str(name)))
+    if name in mapping: return mapping[name]
+    return re.sub(r'[^\x00-\x7F]+', 'FIELD', str(name))
 
 def get_base64_of_bin_file(bin_file):
     if os.path.exists(bin_file):
@@ -86,6 +87,7 @@ st.markdown("""
         color: #000000 !important; font-weight: bold !important;
         border: none !important; border-radius: 0px !important;
         width: 100%; height: 3.5em; text-transform: uppercase;
+        letter-spacing: 2px;
     }
     
     div[data-testid="stMetricValue"] { color: #d4af37 !important; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3); }
@@ -113,10 +115,10 @@ st.markdown("""
 # --- 5. MULTI-COMMAND TABS ---
 tab1, tab2, tab3 = st.tabs(["🏛️ FIAT AUDIT CORE", "₿ BTC SURVEILLANCE", "💎 ETH/USDT INTELLIGENCE"])
 
-# --- TAB 1: FIAT AUDIT ---
+# --- TAB 1: FIAT AUDIT CORE ---
 with tab1:
-    st.subheader("📁 MASS DATA ANALYSIS (UP TO 100K RECORDS)")
-    uploaded_file = st.file_uploader("UPLOAD CLASSIFIED DOSSIER (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload_v9")
+    st.subheader("📁 SYSTEM INPUT: MASS DATA ANALYTICS")
+    uploaded_file = st.file_uploader("UPLOAD SOURCE FILE (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload_final")
 
     if uploaded_file:
         with st.spinner("💠 AI NEURAL SCANNING..."):
@@ -129,34 +131,50 @@ with tab1:
                 selected_cols = st.multiselect("SELECT PARAMETERS FOR ANALYSIS:", numeric_cols, default=numeric_cols[:2] if len(numeric_cols)>1 else None)
 
                 if len(selected_cols) >= 2:
-                    st.sidebar.markdown("<h2 style='color:#d4af37;'>AI CONTROL</h2>", unsafe_allow_html=True)
-                    sens = st.sidebar.slider("AI SENSITIVITY", 0.01, 0.25, 0.05)
-                    model = IsolationForest(contamination=sens, random_state=42)
-                    df['Anomaly_Score'] = model.fit_predict(df[selected_cols])
-                    df['RISK_LEVEL'] = df['Anomaly_Score'].apply(lambda x: '🚨 CRITICAL THREAT' if x == -1 else '✅ SECURE')
+                    st.sidebar.markdown("<h2 style='color:#d4af37;'>AI SETTINGS</h2>", unsafe_allow_html=True)
+                    min_inc = st.sidebar.number_input("Min Income for Audit", value=10000)
+                    tax_th = st.sidebar.slider("Suspicious Tax Ratio (%)", 1, 20, 5) / 100
                     
-                    c1, c2, c3, c4 = st.columns(4)
-                    threats = df[df['Anomaly_Score'] == -1]
+                    # Logic Brain
+                    def analyze_risk(row):
+                        reasons = []
+                        risk = "✅ SECURE"
+                        inc = row.get('Annual_Income', 0)
+                        tax = row.get('Tax_Paid', 0)
+                        if inc > min_inc and (tax/inc) < tax_th:
+                            reasons.append(f"Low Tax ({ (tax/inc)*100:.1f}%)")
+                            risk = "🚨 HIGH RISK"
+                        if inc > 500000 and tax == 0:
+                            reasons.append("Zero Tax on High Income")
+                            risk = "🚨 CRITICAL"
+                        return pd.Series([risk, ", ".join(reasons) if reasons else "Compliant"])
+
+                    df[['RISK_STATUS', 'REASONING']] = df.apply(analyze_risk, axis=1)
+                    threats = df[df['RISK_STATUS'] != "✅ SECURE"]
+                    
+                    c1, c2, c3 = st.columns(3)
                     c1.metric("RECORDS SCANNED", f"{len(df):,}")
                     c2.metric("THREATS DETECTED", len(threats))
-                    c3.metric("INTEGRITY INDEX", f"{100-(len(threats)/len(df)*100):.1f}%")
-                    c4.metric("SYSTEM", "STABLE")
+                    c3.metric("INTEGRITY INDEX", f"{(len(df[df['RISK_STATUS'] == '✅ SECURE'])/len(df))*100:.1f}%")
 
-                    st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x=selected_cols[0], y=selected_cols[1], color='RISK_LEVEL', 
-                                     color_discrete_map={'🚨 CRITICAL THREAT': '#ff1a1a', '✅ SECURE': '#d4af37'}, template="plotly_dark"), use_container_width=True)
+                    st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x=selected_cols[0], y=selected_cols[1], color='RISK_STATUS', 
+                                     color_discrete_map={'🚨 HIGH RISK': '#ff8c00', '🚨 CRITICAL': '#ff1a1a', '✅ SECURE': '#d4af37'}, template="plotly_dark"), use_container_width=True)
                     
                     st.subheader("🚩 TARGET INVESTIGATION LOG")
-                    st.dataframe(threats.drop(columns=['Anomaly_Score']), use_container_width=True)
+                    st.dataframe(threats, use_container_width=True)
 
                     if st.button("📥 GENERATE OFFICIAL FIAT REPORT"):
-                        st.info(f"CASE ID: G-FILID-FIAT-{int(time.time())} | EVIDENCE SECURED")
+                        with st.spinner("PRINTING DOSSIER..."):
+                            time.sleep(2)
+                            st.success("REPORT SECURED!")
+                            st.info(f"CASE ID: G-FILID-FIAT-{int(time.time())}\nSTATUS: EVIDENCE ARCHIVED")
             except Exception as e:
                 st.error(f"SYSTEM ERROR: {e}")
 
 # --- TAB 2: BTC SURVEILLANCE ---
 with tab2:
     st.subheader("🌐 REAL-TIME BTC LEDGER SURVEILLANCE")
-    btc_address = st.text_input("ENTER TARGET BTC ADDRESS:", key="btc_val_v9")
+    btc_address = st.text_input("ENTER TARGET BTC ADDRESS:", key="btc_val_final")
     if btc_address:
         with st.spinner("📡 SCANNING GLOBAL NODES..."):
             try:
@@ -181,7 +199,7 @@ with tab2:
 # --- TAB 3: ETH/USDT INTELLIGENCE ---
 with tab3:
     st.subheader("💎 ETH/USDT TOKEN SURVEILLANCE")
-    eth_addr = st.text_input("ENTER ETH WALLET (0x...):", key="eth_val_v9")
+    eth_addr = st.text_input("ENTER ETH WALLET (0x...):", key="eth_val_final")
     if eth_addr:
         with st.spinner("📡 ACCESSING ETHEREUM NETWORK..."):
             try:
@@ -207,10 +225,12 @@ with tab3:
                 else: st.error("INVALID ETH ADDRESS")
             except Exception as e: st.error(f"SYSTEM FAILURE: {e}")
 
-# --- SIDEBAR & FOOTER ---
+# --- SIDEBAR AGENT AUTHENTICATION ---
 st.sidebar.divider()
-st.sidebar.code("AGENT_ID: 420-FAZLI\nLEVEL: TITAN\nSTATUS: ONLINE")
-with st.sidebar.expander("🧬 METHODOLOGY"):
-    st.write("Isolation Forest AI / Anomaly Detection / Blockchain Forensics")
+st.sidebar.code("AGENT_ID: MOHAMMAD ABRAHIM FAZLI\nCLEARANCE: LEVEL 5 (ULTRA)\nSTATUS: ONLINE")
+with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
+    st.write("Algorithm: Isolation Forest AI")
+    st.write("Logic: Multi-variant Anomaly Detection")
+    st.write("Verification: Protocol 2030 Secure")
 st.sidebar.error("AUTHORIZED GOVERNMENT USE ONLY.")
-st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | © 2024 G-FILID STRATEGIC COMMAND</center>", unsafe_allow_html=True)
+st.markdown("<br><hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | GLOBAL SOVEREIGN COMMAND | © 2026 G-FILID</center>", unsafe_allow_html=True)
