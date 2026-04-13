@@ -95,6 +95,16 @@ asset_limit = st.sidebar.number_input("Max Assets for Low Income", value=5)
 st.sidebar.divider()
 st.sidebar.code("AGENT: MOHAMMAD ABRAHIM FAZLI\nCLEARANCE: ULTRA\nPORTAL: ONLINE")
 
+# --- SIDEBAR (iExec & AGENT INFO) ---
+st.sidebar.divider()
+# بخش مخصوص مسابقه iExec
+st.sidebar.markdown("<h3 style='color:#00f2ff;'>iExec PRIVACY LAYER</h3>", unsafe_allow_html=True)
+st.sidebar.info("Confidential Computing Active. Data is processed in a Trusted Execution Environment (TEE).")
+
+st.sidebar.divider()
+st.sidebar.code("AGENT_ID: 420-FAZLI\nCLEARANCE: LEVEL 5 (ULTRA)\nSTATUS: ONLINE")
+st.sidebar.error("AUTHORIZED ACCESS ONLY.")
+
 # --- 5. MAIN OPERATION ---
 t1, t2, t3 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE"])
 
