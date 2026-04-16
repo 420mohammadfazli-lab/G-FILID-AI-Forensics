@@ -108,7 +108,7 @@ st.sidebar.error("AUTHORIZED ACCESS ONLY.")
 # --- 5. MAIN OPERATION ---
 tab1, tab2, tab3, tab4 = st.tabs(["🏛️ FIAT AUDIT CORE", "₿ BTC SURVEILLANCE", "💎 ETH/USDT INTELLIGENCE", "⚡ SOLANA COMMAND"])
 
-with t1:
+with tab1:
     st.subheader("📁 MASS DATA ANALYSIS")
     file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload")
     
@@ -157,7 +157,7 @@ with t1:
                 st.success("REPORT GENERATED SUCCESSFULLY!")
                 st.info(f"CASE ID: G-FILID-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
 
-with t2:
+with tab2:
     st.subheader("🌐 BTC LEDGER SURVEILLANCE")
     btc_addr = st.text_input("ENTER BTC ADDRESS:", key="btc_logic_final")
     if btc_addr:
@@ -179,7 +179,7 @@ with t2:
                     st.info(f"CASE ID: G-FILID-BTC-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
             else: st.error("INVALID ADDRESS")
 
-with t3:
+with tab3:
     st.subheader("🏦 ETHEREUM & USDT (TETHER) SURVEILLANCE")
     st.markdown("Advanced monitoring of the Ethereum network for high-value Tether laundering patterns.")
     
@@ -242,7 +242,7 @@ with t3:
     else:
         st.info("SYSTEM STATUS: AWAITING ETHEREUM WALLET IDENTIFIER...")
 
-with t4:
+with tab4:
     st.subheader("⚡ SOLANA (SOL) QUANTUM SURVEILLANCE")
     st.markdown("Real-time monitoring of high-speed Solana ecosystem for algorithmic money laundering and pump-and-dump patterns.")
     
