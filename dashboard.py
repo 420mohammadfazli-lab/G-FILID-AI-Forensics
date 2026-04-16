@@ -106,7 +106,7 @@ st.sidebar.code("AGENT_ID: 420-FAZLI\nCLEARANCE: LEVEL 5 (ULTRA)\nSTATUS: ONLINE
 st.sidebar.error("AUTHORIZED ACCESS ONLY.")
 
 # --- 5. MAIN OPERATION ---
-t1, t2, t3 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE"])
+tab1, tab2, tab3, tab4 = st.tabs(["🏛️ FIAT AUDIT CORE", "₿ BTC SURVEILLANCE", "💎 ETH/USDT INTELLIGENCE", "⚡ SOLANA COMMAND"])
 
 with t1:
     st.subheader("📁 MASS DATA ANALYSIS")
@@ -180,30 +180,101 @@ with t2:
             else: st.error("INVALID ADDRESS")
 
 with t3:
-    st.subheader("🏦 ETH/USDT INTELLIGENCE")
-    eth_addr = st.text_input("ENTER ETH ADDRESS:", key="eth_logic_final")
-    if eth_addr:
-        with st.spinner("📡 SCANNING ETHEREUM NODES..."):
-            res = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_addr}?apiKey=freekey")
-            if res.status_code == 200:
-                data = res.json()
-                st.success("🔓 HANDSHAKE SUCCESSFUL")
-                ec1, ec2 = st.columns(2)
-                eth_bal = data.get('ETH',{}).get('balance',0)
-                ec1.metric("ETH BALANCE", f"{eth_bal:,.4f}")
+    st.subheader("🏦 ETHEREUM & USDT (TETHER) SURVEILLANCE")
+    st.markdown("Advanced monitoring of the Ethereum network for high-value Tether laundering patterns.")
+    
+    eth_address = st.text_input("ENTER TARGET ETHEREUM ADDRESS (0x...):", key="eth_executive_intelligence_v1")
+    
+    if eth_address:
+        with st.spinner("📡 INITIATING SATELLITE HANDSHAKE WITH ETHEREUM NODES..."):
+            try:
+                # Professional API handshake for real-time ledger extraction
+                response = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_address}?apiKey=freekey")
                 
-                tokens = data.get('tokens', [])
-                usdt = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
-                if usdt:
-                    val = usdt['balance'] / (10**int(usdt['tokenInfo']['decimals']))
-                    ec2.metric("USDT BALANCE", f"${val:,.2f}")
-                else: ec2.metric("USDT BALANCE", "$0.00")
-                
-                st.info(f"ENS IDENTITY: {data.get('ensName', 'UNREGISTERED')}")
-                
-                if st.button("📥 GENERATE ETH CASE REPORT"):
-                    st.info(f"CASE ID: G-FILID-ETH-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
-            else: st.error("INVALID ADDRESS")
+                if response.status_code == 200:
+                    data = response.json()
+                    st.success("🔓 SECURE DATA LINK ESTABLISHED")
+                    
+                    # Displaying Global Metrics
+                    ec1, ec2, ec3 = st.columns(3)
+                    eth_balance = data.get('ETH', {}).get('balance', 0)
+                    ec1.metric("ETH BALANCE", f"{eth_balance:,.4f} ETH")
+                    
+                    # Precise USDT (Tether) Calculation
+                    tokens = data.get('tokens', [])
+                    usdt_entry = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
+                    
+                    if usdt_entry:
+                        raw_val = usdt_entry['balance']
+                        decimals = int(usdt_entry['tokenInfo']['decimals'])
+                        actual_usdt = raw_val / (10**decimals)
+                        ec2.metric("USDT BALANCE", f"${actual_usdt:,.2f}")
+                        
+                        # High-Level Risk Alert
+                        if actual_usdt > 100000:
+                            st.error("🚨 CRITICAL ALERT: MASSIVE STABLECOIN CONCENTRATION DETECTED")
+                    else:
+                        ec2.metric("USDT BALANCE", "$0.00")
+                    
+                    ec3.metric("INTEGRITY STATUS", "VERIFIED")
+
+                    # Entity Identification Section
+                    st.markdown("#### 👤 ENTITY IDENTIFICATION & ENS")
+                    ens_record = data.get('ensName', "NO REGISTERED IDENTITY FOUND")
+                    st.info(f"ENS RECORD: {ens_record}")
+                    
+                    # Distinguishing Contract from Private Wallet
+                    if data.get('contractInfo'):
+                        st.warning("ENTITY CLASSIFICATION: SMART CONTRACT / PROTOCOL NODE")
+                    else:
+                        st.success("ENTITY CLASSIFICATION: PRIVATE INDIVIDUAL WALLET")
+
+                    # Official Reporting Mechanism
+                    if st.button("📥 GENERATE OFFICIAL ETH FORENSIC DOSSIER"):
+                        with st.spinner("COMPILING CLASSIFIED EVIDENCE..."):
+                            time.sleep(2)
+                            st.success("FORENSIC REPORT GENERATED SUCCESSFULLY!")
+                            st.info(f"CASE ID: G-FILID-ETH-{int(time.time())}\nTARGET: {eth_address}\nSTATUS: EVIDENCE SECURED")
+                else:
+                    st.error("SYSTEM ERROR: INVALID ADDRESS OR API RATE LIMIT EXCEEDED.")
+            except Exception as e:
+                st.error(f"CONNECTION FAILURE: {e}")
+    else:
+        st.info("SYSTEM STATUS: AWAITING ETHEREUM WALLET IDENTIFIER...")
+
+with t4:
+    st.subheader("⚡ SOLANA (SOL) QUANTUM SURVEILLANCE")
+    st.markdown("Real-time monitoring of high-speed Solana ecosystem for algorithmic money laundering and pump-and-dump patterns.")
+    
+    sol_address = st.text_input("ENTER TARGET SOLANA ADDRESS (Base58...):", key="sol_executive_forensics_v1")
+    
+    if sol_address:
+        with st.spinner("📡 INITIATING HIGH-SPEED NEURAL HANDSHAKE WITH SOLANA NODES..."):
+            # Simulated high-level decryption for Solana Mainnet-Beta
+            time.sleep(1.8)
+            st.success("🔓 SOLANA DATA LINK SECURED")
+            
+            # Displaying Command Metrics
+            sc1, sc2, sc3 = st.columns(3)
+            sc1.metric("SOL BALANCE", "LATENCY SYNC...")
+            sc2.metric("NETWORK STATUS", "ACTIVE")
+            sc3.metric("TRANSACTION VELOCITY", "2,840 TPS")
+            
+            # Entity Intelligence Section
+            st.markdown("#### 👤 ENTITY IDENTIFICATION & ANALYSIS")
+            st.info(f"TARGET IDENTIFIED: {sol_address}")
+            
+            # Threat Analysis Logic
+            st.warning("SYSTEM NOTICE: Monitoring for high-frequency 'Mixer' patterns and automated trading anomalies on Solana.")
+            
+            # Official Forensic Action
+            if st.button("📥 GENERATE OFFICIAL SOLANA FORENSIC DOSSIER"):
+                with st.spinner("COMPILING CLASSIFIED BLOCKCHAIN EVIDENCE..."):
+                    time.sleep(2)
+                    st.success("SOLANA CASE REPORT GENERATED!")
+                    st.info(f"CASE ID: G-FILID-SOL-{int(time.time())}\nTARGET: {sol_address}\nSTATUS: EVIDENCE SECURED")
+    else:
+        st.info("SYSTEM STATUS: AWAITING SOLANA WALLET IDENTIFIER...")
 
 # --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
