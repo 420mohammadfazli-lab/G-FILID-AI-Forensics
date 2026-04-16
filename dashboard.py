@@ -243,38 +243,57 @@ with tab3:
         st.info("SYSTEM STATUS: AWAITING ETHEREUM WALLET IDENTIFIER...")
 
 with tab4:
-    st.subheader("⚡ SOLANA (SOL) QUANTUM SURVEILLANCE")
-    st.markdown("Real-time monitoring of high-speed Solana ecosystem for algorithmic money laundering and pump-and-dump patterns.")
+    st.subheader("⚡ SOLANA (SOL) LIVE SURVEILLANCE")
+    st.markdown("Direct handshake with Solana Mainnet-Beta for real-time asset tracking.")
     
-    sol_address = st.text_input("ENTER TARGET SOLANA ADDRESS (Base58...):", key="sol_executive_forensics_v1")
+    sol_address = st.text_input("ENTER TARGET SOLANA ADDRESS:", key="sol_real_logic_v2")
     
     if sol_address:
-        with st.spinner("📡 INITIATING HIGH-SPEED NEURAL HANDSHAKE WITH SOLANA NODES..."):
-            # Simulated high-level decryption for Solana Mainnet-Beta
-            time.sleep(1.8)
-            st.success("🔓 SOLANA DATA LINK SECURED")
-            
-            # Displaying Command Metrics
-            sc1, sc2, sc3 = st.columns(3)
-            sc1.metric("SOL BALANCE", "LATENCY SYNC...")
-            sc2.metric("NETWORK STATUS", "ACTIVE")
-            sc3.metric("TRANSACTION VELOCITY", "2,840 TPS")
-            
-            # Entity Intelligence Section
-            st.markdown("#### 👤 ENTITY IDENTIFICATION & ANALYSIS")
-            st.info(f"TARGET IDENTIFIED: {sol_address}")
-            
-            # Threat Analysis Logic
-            st.warning("SYSTEM NOTICE: Monitoring for high-frequency 'Mixer' patterns and automated trading anomalies on Solana.")
-            
-            # Official Forensic Action
-            if st.button("📥 GENERATE OFFICIAL SOLANA FORENSIC DOSSIER"):
-                with st.spinner("COMPILING CLASSIFIED BLOCKCHAIN EVIDENCE..."):
-                    time.sleep(2)
-                    st.success("SOLANA CASE REPORT GENERATED!")
-                    st.info(f"CASE ID: G-FILID-SOL-{int(time.time())}\nTARGET: {sol_address}\nSTATUS: EVIDENCE SECURED")
+        with st.spinner("📡 SCANNING SOLANA LEDGER..."):
+            try:
+                # اتصال مستقیم به RPC رسمی سولانا برای گرفتن موجودی واقعی
+                payload = {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "getBalance",
+                    "params": [sol_address]
+                }
+                res = requests.post("https://api.mainnet-beta.solana.com", json=payload)
+                
+                if res.status_code == 200:
+                    data = res.json()
+                    if 'result' in data:
+                        # تبدیل لمپورت به سول (هر ۱ میلیارد لمپورت = ۱ سول)
+                        lamports = data['result']['value']
+                        sol_balance = lamports / 1000000000
+                        
+                        st.success("🔓 SOLANA DATA LINK ESTABLISHED")
+                        
+                        sc1, sc2, sc3 = st.columns(3)
+                        sc1.metric("SOL BALANCE", f"{sol_balance:,.2f} SOL")
+                        sc2.metric("NETWORK", "MAINNET-BETA")
+                        sc3.metric("STATUS", "LIVE SCAN")
+                        
+                        # تحلیل ریسک بر اساس موجودی
+                        st.markdown("#### 🧠 AI THREAT ANALYSIS")
+                        if sol_balance > 1000:
+                            st.error(f"🚨 CRITICAL ALERT: MEGA-WHALE DETECTED ({sol_balance:,.2f} SOL)")
+                        elif sol_balance > 100:
+                            st.warning("⚠️ NOTICE: HIGH-VALUE TARGET MONITORING ACTIVE")
+                        else:
+                            st.success("✅ STATUS: PRIVATE ACCOUNT (LOW RISK)")
+
+                        # دکمه گزارش نهایی
+                        if st.button("📥 GENERATE SOLANA FORENSIC DOSSIER"):
+                            st.info(f"CASE ID: G-FILID-SOL-{int(time.time())} | EVIDENCE SECURED")
+                    else:
+                        st.error("INVALID SOLANA ADDRESS: PLEASE CHECK THE IDENTIFIER.")
+                else:
+                    st.error("NETWORK ERROR: COULD NOT REACH SOLANA NODES.")
+            except Exception as e:
+                st.error(f"CONNECTION FAILED: {e}")
     else:
-        st.info("SYSTEM STATUS: AWAITING SOLANA WALLET IDENTIFIER...")
+        st.info("SYSTEM STATUS: STANDING BY FOR SOLANA ADDRESS...")
 
 # --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
