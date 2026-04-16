@@ -244,56 +244,22 @@ with tab3:
 
 with tab4:
     st.subheader("⚡ SOLANA (SOL) LIVE SURVEILLANCE")
-    st.markdown("Direct handshake with Solana Mainnet-Beta for real-time asset tracking.")
-    
-    sol_address = st.text_input("ENTER TARGET SOLANA ADDRESS:", key="sol_real_logic_v2")
-    
+    sol_address = st.text_input("ENTER SOLANA ADDRESS:", key="sol_val_final")
     if sol_address:
-        with st.spinner("📡 SCANNING SOLANA LEDGER..."):
+        with st.spinner("📡 SCANNING SOLANA MAINNET..."):
             try:
-                # اتصال مستقیم به RPC رسمی سولانا برای گرفتن موجودی واقعی
-                payload = {
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "method": "getBalance",
-                    "params": [sol_address]
-                }
-                res = requests.post("https://api.mainnet-beta.solana.com", json=payload)
-                
+                payload = {"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [sol_address]}
+                res = requests.post("https://api.mainnet-beta.solana.com", json=payload, timeout=10)
                 if res.status_code == 200:
                     data = res.json()
                     if 'result' in data:
-                        # تبدیل لمپورت به سول (هر ۱ میلیارد لمپورت = ۱ سول)
-                        lamports = data['result']['value']
-                        sol_balance = lamports / 1000000000
-                        
-                        st.success("🔓 SOLANA DATA LINK ESTABLISHED")
-                        
-                        sc1, sc2, sc3 = st.columns(3)
-                        sc1.metric("SOL BALANCE", f"{sol_balance:,.2f} SOL")
-                        sc2.metric("NETWORK", "MAINNET-BETA")
-                        sc3.metric("STATUS", "LIVE SCAN")
-                        
-                        # تحلیل ریسک بر اساس موجودی
-                        st.markdown("#### 🧠 AI THREAT ANALYSIS")
-                        if sol_balance > 1000:
-                            st.error(f"🚨 CRITICAL ALERT: MEGA-WHALE DETECTED ({sol_balance:,.2f} SOL)")
-                        elif sol_balance > 100:
-                            st.warning("⚠️ NOTICE: HIGH-VALUE TARGET MONITORING ACTIVE")
-                        else:
-                            st.success("✅ STATUS: PRIVATE ACCOUNT (LOW RISK)")
-
-                        # دکمه گزارش نهایی
-                        if st.button("📥 GENERATE SOLANA FORENSIC DOSSIER"):
-                            st.info(f"CASE ID: G-FILID-SOL-{int(time.time())} | EVIDENCE SECURED")
-                    else:
-                        st.error("INVALID SOLANA ADDRESS: PLEASE CHECK THE IDENTIFIER.")
-                else:
-                    st.error("NETWORK ERROR: COULD NOT REACH SOLANA NODES.")
-            except Exception as e:
-                st.error(f"CONNECTION FAILED: {e}")
-    else:
-        st.info("SYSTEM STATUS: STANDING BY FOR SOLANA ADDRESS...")
+                        sol_bal = data['result']['value'] / 1000000000
+                        st.success("🔓 LIVE SOLANA DATA RETRIEVED")
+                        st.metric("REAL SOL BALANCE", f"{sol_bal:,.2f} SOL")
+                        if sol_bal > 1000: st.error("🚨 CRITICAL: WHALE ALERT")
+                    else: st.error("INVALID SOLANA IDENTIFIER")
+                else: st.error("SOLANA NETWORK LINK FAILED")
+            except: st.error("CONNECTION TIMEOUT")
 
 # --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
