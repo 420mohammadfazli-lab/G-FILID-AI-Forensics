@@ -105,58 +105,66 @@ st.sidebar.divider()
 st.sidebar.code("AGENT_ID: 420-FAZLI\nCLEARANCE: LEVEL 5 (ULTRA)\nSTATUS: ONLINE")
 st.sidebar.error("AUTHORIZED ACCESS ONLY.")
 
-# --- 5. MAIN OPERATION ---
+# --- 5. MAIN OPERATION TABS ---
 tab1, tab2, tab3, tab4 = st.tabs(["🏛️ FIAT AUDIT CORE", "₿ BTC SURVEILLANCE", "💎 ETH/USDT INTELLIGENCE", "⚡ SOLANA COMMAND"])
 
+# --- TAB 1: FIAT AUDIT CORE ---
 with tab1:
     st.subheader("📁 MASS DATA ANALYSIS")
-    file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload")
+    uploaded_file = st.file_uploader("UPLOAD SOURCE FILE (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_upload")
     
-    if file:
-        scan_box = st.empty()
-        for _ in range(2):
-            scan_box.markdown("<p class='scanning-text'>[ MONITORING DATA FLOW - SCANNING NEURAL PACKETS... ]</p>", unsafe_allow_html=True)
-            time.sleep(0.8)
-        scan_box.empty()
+    if uploaded_file:
+        with st.spinner("💠 AI SCANNING..."):
+            df = pd.read_csv(uploaded_file) if uploaded_file.name.endswith('.csv') else pd.read_excel(uploaded_file)
+            df.columns = [sanitize_headers(col) for col in df.columns]
+            st.success(f"🔓 ACCESS GRANTED: {len(df):,} ENTITIES LOADED.")
+            
+            # Use columns directly from file for parameters
+            numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+            selected_cols = st.multiselect("SELECT PARAMETERS FOR ANALYSIS:", numeric_cols, default=numeric_cols[:2] if len(numeric_cols)>1 else None)
+            
+            if len(selected_cols) >= 2:
+                # Engine Settings in Sidebar
+                st.sidebar.markdown("<h2 style='color:#d4af37;'>ENGINE SETTINGS</h2>", unsafe_allow_html=True)
+                min_income = st.sidebar.number_input("Minimum Income for Audit ($)", value=10000)
+                tax_ratio = st.sidebar.slider("Suspicious Tax Ratio (%)", 1, 20, 5) / 100
+                asset_limit = st.sidebar.number_input("Max Assets for Low Income", value=5)
 
-        df = pd.read_csv(file) if file.name.endswith('.csv') else pd.read_excel(file)
-        
-        def analyze_risk(row):
-            reasons = []
-            risk_level = "✅ SECURE"
-            if row.get('Annual_Income', 0) > min_income_check:
-                actual_ratio = row.get('Tax_Paid', 0) / row.get('Annual_Income', 1)
-                if actual_ratio < tax_threshold:
-                    reasons.append(f"Low Tax Ratio ({actual_ratio*100:.1f}%)")
-                    risk_level = "🚨 HIGH RISK"
-            if row.get('Asset_Count', 0) > asset_limit and row.get('Annual_Income', 0) < 20000:
-                reasons.append("Unexplained Assets vs Income")
-                risk_level = "🚨 HIGH RISK"
-            if row.get('Annual_Income', 0) > 500000 and row.get('Tax_Paid', 0) == 0:
-                reasons.append("Critical: Zero Tax on High Income")
-                risk_level = "🚨 CRITICAL"
-            return pd.Series([risk_level, ", ".join(reasons) if reasons else "Compliant Pattern"])
+                # AI Logic
+                def analyze_risk(row):
+                    reasons = []
+                    risk = "✅ SECURE"
+                    inc, tax, ast = row.get('Annual_Income', 0), row.get('Tax_Paid', 0), row.get('Asset_Count', 0)
+                    if inc > min_income and (tax / inc) < tax_ratio:
+                        reasons.append(f"Low Tax Ratio ({(tax/inc)*100:.1f}%)"); risk = "🚨 HIGH RISK"
+                    if ast > asset_limit and inc < 20000:
+                        reasons.append("Unexplained Wealth"); risk = "🚨 HIGH RISK"
+                    if inc > 500000 and tax == 0:
+                        reasons.append("Critical: Zero Tax"); risk = "🚨 CRITICAL"
+                    return pd.Series([risk, ", ".join(reasons) if reasons else "Compliant Pattern"])
 
-        with st.spinner("AI is calculating risk factors..."):
-            df[['RISK_STATUS', 'REASONING']] = df.apply(analyze_risk, axis=1)
+                df[['RISK_STATUS', 'REASONING']] = df.apply(analyze_risk, axis=1)
+                threats = df[df['RISK_STATUS'] != "✅ SECURE"]
+                
+                c1, c2, c3 = st.columns(3)
+                c1.metric("SCANNED", f"{len(df):,}")
+                c2.metric("THREATS DETECTED", len(threats))
+                c3.metric("INTEGRITY", f"{(len(df[df['RISK_STATUS'] == '✅ SECURE'])/len(df))*100:.1f}%")
 
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("TOTAL SCANNED", f"{len(df):,}")
-        m2.metric("THREATS DETECTED", len(df[df['RISK_STATUS'] != "✅ SECURE"]))
-        m3.metric("INTEGRITY INDEX", f"{(len(df[df['RISK_STATUS'] == '✅ SECURE'])/len(df))*100:.1f}%")
-        m4.metric("ENGINE", "V3-TITAN")
+                st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x=selected_cols[0], y=selected_cols[1], color='RISK_STATUS', template="plotly_dark"), use_container_width=True)
+                
+                st.subheader("🚩 TARGET INVESTIGATION LOG")
+                st.dataframe(threats, use_container_width=True)
 
-        st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', title="Income vs Tax Pattern", template="plotly_dark"), use_container_width=True)
+                if st.button("📥 GENERATE OFFICIAL FORENSIC REPORT"):
+                    with st.spinner("PRINTING DOSSIER..."):
+                        time.sleep(2)
+                        st.success("OFFICIAL DOSSIER GENERATED!")
+                        st.info(f"CASE ID: G-FILID-FIAT-{int(time.time())} | EVIDENCE SECURED")
+            else:
+                st.warning("SELECT AT LEAST 2 PARAMETERS TO START.")
 
-        st.subheader("🚩 DETAILED INVESTIGATION LOG")
-        st.dataframe(df, use_container_width=True)
-
-        if st.button("📥 GENERATE OFFICIAL FORENSIC REPORT"):
-            with st.spinner("PRINTING CLASSIFIED DOSSIER..."):
-                time.sleep(2)
-                st.success("REPORT GENERATED SUCCESSFULLY!")
-                st.info(f"CASE ID: G-FILID-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
-
+# --- TAB 2: BTC SURVEILLANCE ---
 with tab2:
     st.subheader("🌐 BTC LEDGER SURVEILLANCE")
     btc_addr = st.text_input("ENTER BTC ADDRESS:", key="btc_logic_final")
@@ -165,101 +173,74 @@ with tab2:
             res = requests.get(f"https://blockchain.info/rawaddr/{btc_addr}")
             if res.status_code == 200:
                 data = res.json()
-                st.success("🔓 DATA LINK ESTABLISHED")
-                bc1, bc2 = st.columns(2) # فیکس شد
+                st.success("🔓 BLOCKCHAIN DATA LINK ESTABLISHED")
+                bc1, bc2 = st.columns(2)
                 bal = data['final_balance']/100000000
-                bc1.metric("BALANCE", f"{bal:.4f} BTC") # اصلاح mc1 به bc1
-                bc2.metric("TRANSACTIONS", data['n_tx']) # اصلاح mc2 به bc2
+                bc1.metric("BALANCE", f"{bal:.4f} BTC")
+                bc2.metric("TRANSACTIONS", data['n_tx'])
                 
                 st.markdown("#### 🔄 RECENT FLOWS (Source & Destination)")
                 txs = [{"Hash": tx['hash'][:20]+"...", "Value": tx['result']/100000000, "Time": pd.to_datetime(tx['time'], unit='s')} for tx in data['txs'][:10]]
                 st.table(pd.DataFrame(txs))
                 
                 if st.button("📥 GENERATE BTC CASE REPORT"):
-                    st.info(f"CASE ID: G-FILID-BTC-{int(time.time())}\nSTATUS: EVIDENCE SECURED")
-            else: st.error("INVALID ADDRESS")
+                    st.info(f"CASE ID: G-FILID-BTC-{int(time.time())} | STATUS: SECURED")
+            else: st.error("INVALID BTC ADDRESS")
 
+# --- TAB 3: ETH/USDT INTELLIGENCE (Alchemy Powered) ---
 with tab3:
-    st.subheader("🏦 ETHEREUM & USDT (TETHER) SURVEILLANCE")
-    st.markdown("Advanced monitoring of the Ethereum network for high-value Tether laundering patterns.")
-    
-    eth_address = st.text_input("ENTER TARGET ETHEREUM ADDRESS (0x...):", key="eth_executive_intelligence_v1")
-    
-    if eth_address:
-        with st.spinner("📡 INITIATING SATELLITE HANDSHAKE WITH ETHEREUM NODES..."):
+    st.subheader("🏦 ETH/USDT COMMAND HUB")
+    eth_addr = st.text_input("ENTER ETH WALLET (0x...):", key="eth_logic_final")
+    if eth_addr:
+        with st.spinner("📡 HANDSHAKE WITH ALCHEMY PRIVATE NODE..."):
+            # Part A: ETH Balance via Alchemy (Your Key)
+            alchemy_url = f"https://eth-mainnet.g.alchemy.com/v2/OhzCbH4mthLKDI6SszHhj"
+            payload = {"jsonrpc":"2.0","method":"eth_getBalance","params":[eth_addr, "latest"],"id":1}
+            
             try:
-                # Professional API handshake for real-time ledger extraction
-                response = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_address}?apiKey=freekey")
+                # 1. Get Real ETH Balance
+                eth_res = requests.post(alchemy_url, json=payload).json()
+                eth_hex = eth_res.get('result', '0x0')
+                eth_bal = int(eth_hex, 16) / 10**18
+
+                # 2. Get USDT & Tokens via Ethplorer (Best for token names)
+                token_res = requests.get(f"https://api.ethplorer.io/getAddressInfo/{eth_addr}?apiKey=freekey").json()
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    st.success("🔓 SECURE DATA LINK ESTABLISHED")
-                    
-                    # Displaying Global Metrics
-                    ec1, ec2, ec3 = st.columns(3)
-                    eth_balance = data.get('ETH', {}).get('balance', 0)
-                    ec1.metric("ETH BALANCE", f"{eth_balance:,.4f} ETH")
-                    
-                    # Precise USDT (Tether) Calculation
-                    tokens = data.get('tokens', [])
-                    usdt_entry = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
-                    
-                    if usdt_entry:
-                        raw_val = usdt_entry['balance']
-                        decimals = int(usdt_entry['tokenInfo']['decimals'])
-                        actual_usdt = raw_val / (10**decimals)
-                        ec2.metric("USDT BALANCE", f"${actual_usdt:,.2f}")
-                        
-                        # High-Level Risk Alert
-                        if actual_usdt > 100000:
-                            st.error("🚨 CRITICAL ALERT: MASSIVE STABLECOIN CONCENTRATION DETECTED")
-                    else:
-                        ec2.metric("USDT BALANCE", "$0.00")
-                    
-                    ec3.metric("INTEGRITY STATUS", "VERIFIED")
+                st.success("🔓 ENCRYPTED HANDSHAKE SUCCESSFUL")
+                ec1, ec2, ec3 = st.columns(3)
+                ec1.metric("REAL ETH BALANCE", f"{eth_bal:,.4f} ETH")
+                
+                # Precise USDT Extraction
+                tokens = token_res.get('tokens', [])
+                usdt_data = next((t for t in tokens if t['tokenInfo']['symbol'] == 'USDT'), None)
+                if usdt_data:
+                    actual_usdt = usdt_data['balance'] / (10**int(usdt_data['tokenInfo']['decimals']))
+                    ec2.metric("REAL USDT BALANCE", f"${actual_usdt:,.2f}")
+                else: ec2.metric("USDT BALANCE", "$0.00")
+                
+                ec3.metric("ASSET TYPES", len(tokens))
+                st.info(f"ENS IDENTITY: {token_res.get('ensName', 'UNREGISTERED')}")
+                
+                if st.button("📥 GENERATE ETH CASE REPORT"):
+                    st.info(f"CASE ID: G-FILID-ETH-{int(time.time())} | EVIDENCE SECURED")
+            except: st.error("NODE CONNECTION TIMEOUT. PLEASE CHECK ADDRESS.")
 
-                    # Entity Identification Section
-                    st.markdown("#### 👤 ENTITY IDENTIFICATION & ENS")
-                    ens_record = data.get('ensName', "NO REGISTERED IDENTITY FOUND")
-                    st.info(f"ENS RECORD: {ens_record}")
-                    
-                    # Distinguishing Contract from Private Wallet
-                    if data.get('contractInfo'):
-                        st.warning("ENTITY CLASSIFICATION: SMART CONTRACT / PROTOCOL NODE")
-                    else:
-                        st.success("ENTITY CLASSIFICATION: PRIVATE INDIVIDUAL WALLET")
-
-                    # Official Reporting Mechanism
-                    if st.button("📥 GENERATE OFFICIAL ETH FORENSIC DOSSIER"):
-                        with st.spinner("COMPILING CLASSIFIED EVIDENCE..."):
-                            time.sleep(2)
-                            st.success("FORENSIC REPORT GENERATED SUCCESSFULLY!")
-                            st.info(f"CASE ID: G-FILID-ETH-{int(time.time())}\nTARGET: {eth_address}\nSTATUS: EVIDENCE SECURED")
-                else:
-                    st.error("SYSTEM ERROR: INVALID ADDRESS OR API RATE LIMIT EXCEEDED.")
-            except Exception as e:
-                st.error(f"CONNECTION FAILURE: {e}")
-    else:
-        st.info("SYSTEM STATUS: AWAITING ETHEREUM WALLET IDENTIFIER...")
-
+# --- TAB 4: SOLANA COMMAND ---
 with tab4:
     st.subheader("⚡ SOLANA (SOL) LIVE SURVEILLANCE")
-    sol_address = st.text_input("ENTER SOLANA ADDRESS:", key="sol_val_final")
-    if sol_address:
+    sol_addr = st.text_input("ENTER SOLANA ADDRESS:", key="sol_logic_final")
+    if sol_addr:
         with st.spinner("📡 SCANNING SOLANA MAINNET..."):
             try:
-                payload = {"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [sol_address]}
+                payload = {"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [sol_addr]}
                 res = requests.post("https://api.mainnet-beta.solana.com", json=payload, timeout=10)
                 if res.status_code == 200:
-                    data = res.json()
-                    if 'result' in data:
-                        sol_bal = data['result']['value'] / 1000000000
-                        st.success("🔓 LIVE SOLANA DATA RETRIEVED")
-                        st.metric("REAL SOL BALANCE", f"{sol_bal:,.2f} SOL")
-                        if sol_bal > 1000: st.error("🚨 CRITICAL: WHALE ALERT")
-                    else: st.error("INVALID SOLANA IDENTIFIER")
-                else: st.error("SOLANA NETWORK LINK FAILED")
-            except: st.error("CONNECTION TIMEOUT")
+                    sol_bal = res.json()['result']['value'] / 10**9
+                    st.success("🔓 LIVE SOLANA DATA RETRIEVED")
+                    st.metric("REAL SOL BALANCE", f"{sol_bal:,.2f} SOL")
+                else: st.error("NETWORK ERROR")
+            except: st.error("CONNECTION FAILED")
+
 
 # --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
