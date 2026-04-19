@@ -242,6 +242,7 @@ with tab4:
             except: st.error("CONNECTION FAILED")
 
 
+
 # --- FOOTER & METHODOLOGY ---
 st.sidebar.divider()
 with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
