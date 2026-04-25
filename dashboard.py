@@ -8,7 +8,7 @@ import base64
 import os
 import re
 import requests
-from fpdf import FPDF # اضافه شدن کتابخانه پی‌دی‌اف
+from fpdf import FPDF
 
 # --- 1. SYSTEM IDENTITY & CONFIG ---
 st.set_page_config(page_title="G-FILID | INTELLIGENCE CORE", layout="wide", page_icon="🛡️")
@@ -20,7 +20,7 @@ def get_base64_of_bin_file(bin_file):
         return base64.b64encode(data).decode()
     return None
 
-# تابع کمکی برای ساخت فایل PDF واقعی
+# FUNCTION TO CREATE REAL PDF
 def create_pdf_report(target_id, balance, activity, risk):
     pdf = FPDF()
     pdf.add_page()
@@ -36,7 +36,7 @@ def create_pdf_report(target_id, balance, activity, risk):
     pdf.cell(190, 10, f"CASE ID: G-FILID-{int(time.time())}", ln=True)
     pdf.set_font("Arial", '', 11)
     pdf.cell(190, 10, f"OFFICER: MOHAMMAD ABRAHIM FAZLI", ln=True)
-    pdf.cell(190, 10, f"LOCATION: KABUL HUB | STATUS: EVIDENCE SECURED", ln=True)
+    pdf.cell(190, 10, f"STATUS: EVIDENCE SECURED", ln=True)
     pdf.ln(5)
     pdf.set_font("Arial", 'B', 11)
     pdf.cell(190, 10, "TARGET ANALYSIS SUMMARY:", ln=True)
@@ -44,7 +44,7 @@ def create_pdf_report(target_id, balance, activity, risk):
     pdf.multi_cell(190, 8, f"Identifier: {target_id}\nAsset/Balance: {balance}\nActivity: {activity}\nAI Verdict: {risk}")
     pdf.ln(10)
     pdf.set_font("Arial", 'I', 8)
-    pdf.cell(190, 10, "Protected by Quantum Encryption Protocols. Verified by G-FILID Strategic Command.", align='C')
+    pdf.cell(190, 10, "Verified by G-FILID Quantum Protocols.", align='C')
     return pdf.output()
 
 def sanitize_headers(name):
@@ -130,16 +130,12 @@ st.sidebar.code("AGENT: MOHAMMAD ABRAHIM FAZLI\nCLEARANCE: ULTRA\nPORTAL: ONLINE
 
 st.sidebar.divider()
 st.sidebar.markdown("<h3 style='color:#00f2ff;'>iExec PRIVACY LAYER</h3>", unsafe_allow_html=True)
-st.sidebar.info("Confidential Computing Active. Data is processed in a Trusted Execution Environment (TEE).")
-
-st.sidebar.divider()
-st.sidebar.code("AGENT_ID: 420-FAZLI\nCLEARANCE: LEVEL 5 (ULTRA)\nSTATUS: ONLINE")
-st.sidebar.error("AUTHORIZED ACCESS ONLY.")
+st.sidebar.info("Confidential Computing Active. Data is processed in a TEE.")
 
 # --- 5. MAIN OPERATION ---
-tab1, tab2, tab3, tab4 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE", "⚡ SOLANA COMMAND"])
+t1, t2, t3, t4 = st.tabs(["🏛️ FIAT INVESTIGATION", "₿ BTC SURVEILLANCE", "💎 ETH/USDT TRACE", "⚡ SOLANA COMMAND"])
 
-with tab1:
+with t1:
     st.subheader("📁 MASS DATA ANALYSIS")
     file = st.file_uploader("UPLOAD DOSSIER (CSV/XLSX)", type=["csv", "xlsx"], key="fiat_up")
     
@@ -164,9 +160,6 @@ with tab1:
             if row.get('Asset_Count', 0) > asset_limit and row.get('Annual_Income', 0) < 20000:
                 reasons.append("Unexplained Assets")
                 risk_level = "🚨 HIGH RISK"
-            if row.get('Annual_Income', 0) > 500000 and row.get('Tax_Paid', 0) == 0:
-                reasons.append("Critical: Zero Tax")
-                risk_level = "🚨 CRITICAL"
             return pd.Series([risk_level, ", ".join(reasons) if reasons else "Compliant Pattern"])
 
         with st.spinner("AI is calculating risk factors..."):
@@ -180,14 +173,12 @@ with tab1:
         m4.metric("ENGINE", "V3-TITAN")
 
         st.plotly_chart(px.scatter(df.sample(min(len(df), 5000)), x='Annual_Income', y='Tax_Paid', color='RISK_STATUS', template="plotly_dark"), use_container_width=True)
-        st.subheader("🚩 INVESTIGATION LOG")
         st.dataframe(threats, use_container_width=True)
 
-        # دکمه دانلود گزارش پی‌دی‌اف واقعی
-        report_pdf = create_pdf_report("Mass Audit Dossier", "Multiple Assets", f"{len(df)} Records", f"{len(threats)} Threats")
-        st.download_button(label="📥 DOWNLOAD OFFICIAL FORENSIC REPORT (PDF)", data=bytes(report_pdf), file_name="G-FILID_Fiat_Report.pdf", mime="application/pdf")
+        pdf_bytes = create_pdf_report("Mass Audit", "Variable", f"{len(df)} Records", f"{len(threats)} Threats")
+        st.download_button(label="📥 DOWNLOAD OFFICIAL FORENSIC REPORT (PDF)", data=bytes(pdf_bytes), file_name="G-FILID_Fiat_Report.pdf", mime="application/pdf")
 
-with tab2:
+with t2:
     st.subheader("🌐 BTC LEDGER SURVEILLANCE")
     btc_addr = st.text_input("ENTER BTC ADDRESS:", key="btc_logic_final")
     if btc_addr:
@@ -201,20 +192,19 @@ with tab2:
                 bc1.metric("BALANCE", f"{bal:.4f} BTC")
                 bc2.metric("TRANSACTIONS", data['n_tx'])
                 
-                st.markdown("#### 🔄 RECENT FLOWS")
-                txs = [{"Hash": tx['hash'][:20]+"...", "Value": tx['result']/100000000, "Time": pd.to_datetime(tx['time'], unit='s')} for tx in data['txs'][:10]]
+                st.write("#### RECENT FLOWS")
+                txs = [{"Hash": tx['hash'][:20]+"...", "Value": tx['result']/100000000} for tx in data['txs'][:10]]
                 st.table(pd.DataFrame(txs))
                 
-                # دانلود پی‌دی‌اف واقعی برای بیت‌کوین
-                btc_pdf = create_pdf_report(btc_addr, f"{bal} BTC", f"{data['n_tx']} Txs", "High Priority Tracing")
-                st.download_button(label="📥 DOWNLOAD BTC CASE REPORT (PDF)", data=bytes(btc_pdf), file_name="G-FILID_BTC_Case.pdf", mime="application/pdf")
+                btc_pdf = create_pdf_report(btc_addr, f"{bal} BTC", f"{data['n_tx']} Txs", "Active Surveillance")
+                st.download_button(label="📥 DOWNLOAD BTC CASE REPORT (PDF)", data=bytes(btc_pdf), file_name="G-FILID_BTC_Report.pdf", mime="application/pdf")
             else: st.error("INVALID ADDRESS")
 
-with tab3:
+with t3:
     st.subheader("🏦 ETH/USDT COMMAND HUB")
     eth_addr = st.text_input("ENTER ETH ADDRESS:", key="eth_logic_final")
     if eth_addr:
-        with st.spinner("📡 SCANNING ETHEREUM NODES..."):
+        with st.spinner("📡 SCANNING ETHEREUM..."):
             alchemy_url = f"https://eth-mainnet.g.alchemy.com/v2/OhzCbH4mthLKDI6SszHhj"
             payload = {"jsonrpc":"2.0","method":"eth_getBalance","params":[eth_addr, "latest"],"id":1}
             try:
@@ -232,12 +222,11 @@ with tab3:
                     ec2.metric("USDT BALANCE", f"${val:,.2f}")
                 else: ec2.metric("USDT BALANCE", "$0.00")
                 
-                # دانلود پی‌دی‌اف واقعی برای اتریوم
-                eth_pdf = create_pdf_report(eth_addr, f"{eth_bal} ETH", "Token Flow Analysis", "Sovereign Intelligence")
-                st.download_button(label="📥 DOWNLOAD ETH CASE REPORT (PDF)", data=bytes(eth_pdf), file_name="G-FILID_ETH_Case.pdf", mime="application/pdf")
+                eth_pdf = create_pdf_report(eth_addr, f"{eth_bal} ETH", "Multi-Asset Scan", "Secured")
+                st.download_button(label="📥 DOWNLOAD ETH CASE REPORT (PDF)", data=bytes(eth_pdf), file_name="G-FILID_ETH_Report.pdf", mime="application/pdf")
             except: st.error("CONNECTION ERROR")
 
-with tab4:
+with t4:
     st.subheader("⚡ SOLANA (SOL) LIVE SURVEILLANCE")
     sol_addr = st.text_input("ENTER SOLANA ADDRESS:", key="sol_logic_final")
     if sol_addr:
@@ -250,9 +239,8 @@ with tab4:
                     st.success("🔓 LIVE SOLANA DATA RETRIEVED")
                     st.metric("REAL SOL BALANCE", f"{sol_bal:,.2f} SOL")
                     
-                    sol_pdf = create_pdf_report(sol_addr, f"{sol_bal} SOL", "Mainnet-Beta Link", "Active Surveillance")
-                    st.download_button(label="📥 DOWNLOAD SOLANA CASE REPORT (PDF)", data=bytes(sol_pdf), file_name="G-FILID_SOL_Case.pdf", mime="application/pdf")
-                else: st.error("NETWORK ERROR")
+                    sol_pdf = create_pdf_report(sol_addr, f"{sol_bal} SOL", "Mainnet Link", "Verified")
+                    st.download_button(label="📥 DOWNLOAD SOLANA CASE REPORT (PDF)", data=bytes(sol_pdf), file_name="G-FILID_SOL_Report.pdf", mime="application/pdf")
             except: st.error("CONNECTION FAILED")
 
 # --- FOOTER & METHODOLOGY ---
@@ -268,6 +256,6 @@ with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
     *Status: Verified by G-FILID Protocol 2030.*
     """)
 
-st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND © 2026</center>", unsafe_allow_html=True)
-st.sidebar.markdown("<h3 style='color:#00f2ff;'>GLOBAL SUMMIT MODE</h3>", unsafe_allow_html=True)
+st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND</center>", unsafe_allow_html=True)
+st.sidebar.markdown("<h3 style='color:#00f2ff;'>GLOBAL SUMMIT MODE</h3>")
 st.sidebar.info("G-FILID is participating in the Alchemy CoBuild Summit: NYC 2026. 🗽")
