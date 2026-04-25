@@ -268,4 +268,6 @@ with st.sidebar.expander("🧬 NEURAL CORE METHODOLOGY"):
     *Status: Verified by G-FILID Protocol 2030.*
     """)
 
-st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND © 2024</center>", unsafe_allow_html=True)
+st.markdown("<hr><center style='color:#333; font-size:10px;'>FOR OFFICIAL USE ONLY (FOUO) | G-FILID STRATEGIC COMMAND © 2026</center>", unsafe_allow_html=True)
+st.sidebar.markdown("<h3 style='color:#00f2ff;'>GLOBAL SUMMIT MODE</h3>", unsafe_allow_html=True)
+st.sidebar.info("G-FILID is participating in the Alchemy CoBuild Summit: NYC 2026. 🗽")
