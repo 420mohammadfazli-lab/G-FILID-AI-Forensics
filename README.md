@@ -53,6 +53,12 @@ For strategic government contracts and enterprise inquiries:
 **Email:** 420mohammadfazli@gmail.com  
 **X (Twitter):** [@GFILID_Intel](https://x.com/GFILID_Inte)
 
-Status: Global outreach initiated. 2026-04-20
+---
+
+## 🏆 PROFESSIONAL CERTIFICATIONS
+- **Microsoft Certified: AI Copilot & Agent Fundamentals** (April 2026)
+- **Microsoft Applied Skills: AI Research & Reporting** (April 2026)
+- [🔗 View My Official Microsoft Transcript](https://learn.microsoft.com/en-us/users/mohammadfazli/transcript/d8yznc4180o0m2m)
+
 ---
 © 2024-2026 G-FILID STRATEGIC COMMAND | FOR OFFICIAL USE ONLY (FOUO)
